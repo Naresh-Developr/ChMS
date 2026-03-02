@@ -1,6 +1,27 @@
+name: ChMS.Server
+
 services:
   api:
     image: ${DOCKER_REGISTRY-}api
+    container_name: chms-api
     build:
       context: .
       dockerfile: api/Dockerfile
+    ports:
+    - "8080:8080"
+    - "8081:8081"
+
+  database:
+    image: postgres:18.3
+    container_name: chms-db
+    environment:
+      - POSTGRES_DB:chms
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=letmein
+    # This is causing an issue, so I've commented it out for now.
+    # Volumes can help us on not losing table data even when conatiners are deleted
+    # volumes:
+    #   - chms-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  
