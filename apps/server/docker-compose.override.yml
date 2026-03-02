@@ -1,3 +1,5 @@
+name: chms_server
+
 services:
   api:
     environment:
