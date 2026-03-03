@@ -1,19 +1,49 @@
-import React from 'react';
-import { Link } from 'react-router';
-
+import React, { useState, useEffect} from "react";
+import { Link, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../store/index";
+import { signup } from "../features/Auth/authSlice";
 import AuthImage from '../images/auth-image.jpg';
 import AuthDecoration from '../images/auth-decoration.png';
 
 function Signup() {
+
+  const dispatch = useDispatch<AppDispatch>();
+  const Navigate = useNavigate();
+
+  const {user, loading, error} = useSelector((state : RootState) => state.auth);
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    role: "",
+    password:""
+  })
+
+  useEffect(()=>{
+    if(user) Navigate("/");
+  },[])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>{
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+    console.log(e.target.value)
+  };
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault();
+    console.log(formData);
+    dispatch(signup(formData))
+  }
+
   return (
     <main className="bg-white">
 
       <div className="relative md:flex">
-
         {/* Content */}
         <div className="md:w-1/2">
           <div className="min-h-screen h-full flex flex-col after:flex-1">
-
             {/* Header */}
             <div className="flex-1">
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
@@ -42,19 +72,19 @@ function Signup() {
             <div className="max-w-sm mx-auto px-4 py-8">
               <h1 className="text-3xl text-gray-800 font-bold mb-6">Create your Account</h1>
               {/* Form */}
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address <span className="text-red-500">*</span></label>
-                    <input id="email" className="form-input w-full" type="email" />
+                    <input id="email" className="form-input w-full" type="email" value={formData.email} onChange={handleInputChange} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="name">Full Name <span className="text-red-500">*</span></label>
-                    <input id="name" className="form-input w-full" type="text" />
+                    <input id="name" className="form-input w-full" type="text" value={formData.name} onChange={handleInputChange}/>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="role">Your Role <span className="text-red-500">*</span></label>
-                    <select id="role" className="form-select w-full">
+                    <select id="role" className="form-select w-full" value={formData.role} onChange={handleInputChange}>
                       <option>Designer</option>
                       <option>Developer</option>
                       <option>Accountant</option>
@@ -62,7 +92,7 @@ function Signup() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="password">Password</label>
-                    <input id="password" className="form-input w-full" type="password" autoComplete="on" />
+                    <input id="password" className="form-input w-full" type="password" autoComplete="on" value={formData.password} onChange={handleInputChange}/>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-6">
@@ -72,7 +102,13 @@ function Signup() {
                       <span className="text-sm ml-2">Email me about product news.</span>
                     </label>
                   </div>
-                  <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap" to="/">Sign Up</Link>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
+                  >
+                    {loading ? "Creating..." : "Sign Up"}
+                  </button>
                 </div>
               </form>
               {/* Footer */}
