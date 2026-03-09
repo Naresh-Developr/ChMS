@@ -1,4 +1,5 @@
 using System.Reflection;
+using api.Extensions;
 using ChMS.Modules.Auth;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -36,6 +37,7 @@ if (app.Environment.IsDevelopment())
             .WithTheme(ScalarTheme.Moon)
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
+    app.RunMigrations();
 }
 else
 {
