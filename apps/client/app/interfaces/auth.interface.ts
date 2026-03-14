@@ -5,10 +5,10 @@ export interface AuthState {
 }
 
 export interface SignUpFormData {
+  name: string;
   email: string;
-  fullname: string;
-  userRole: UserRole;
+  role: UserRole;
   password: string;
 }
 
-export type UserRole = 'user' | 'admin' | 'superAdmin'
+export type UserRole = "user" | "admin" | "superAdmin";
