@@ -1,10 +1,10 @@
 export interface AuthState {
-  user: any | null;
+  user: User | null;
   loading: boolean;
   error: string | null;
 }
 
-export interface SignUpFormData {
+export interface SignUpRequest {
   name: string;
   email: string;
   role: UserRole;
@@ -12,3 +12,10 @@ export interface SignUpFormData {
 }
 
 export type UserRole = "user" | "admin" | "superAdmin";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
