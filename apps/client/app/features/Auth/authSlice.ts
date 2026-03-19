@@ -5,6 +5,7 @@ import type {
   SignInRequest,
   SignUpRequest,
 } from "../../interfaces/auth.interface";
+import { setAuthAccessToken } from "~/utils/services/tokenServices";
 
 const initialState: AuthState = {
   user: null,
@@ -16,7 +17,9 @@ export const signIn = createAsyncThunk(
   "auth/signin",
   async (data: SignInRequest, thunkAPI) => {
     try {
-      return await signInUser(data);
+      const response = await signInUser(data);
+      setAuthAccessToken(response.accessToken);
+      return response;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Login failed",
