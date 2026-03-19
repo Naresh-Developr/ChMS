@@ -68,7 +68,7 @@ function Signin() {
                 Welcome back!
               </h1>
               {/* Form */}
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
                     <label
@@ -116,7 +116,7 @@ function Signin() {
                     disabled={loading}
                     type="submit"
                   >
-                    Sign In
+                    {loading ? "Signing In..." : "Sign In"}
                   </button>
                 </div>
               </form>

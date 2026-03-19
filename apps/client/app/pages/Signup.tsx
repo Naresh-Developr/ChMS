@@ -157,7 +157,7 @@ function Signup() {
                       disabled={loading}
                       className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap"
                     >
-                      {loading ? "Creating..." : "Sign Up"}
+                      {loading ? "Signing Up..." : "Sign Up"}
                     </button>
 
                     <div
