@@ -1,15 +1,17 @@
-import axios from "axios";
+import type {
+  SignInRequest,
+  SignInResponse,
+  SignUpRequest,
+  User,
+} from "~/interfaces/auth.interface";
+import API from "./axios";
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api", // need to change after backend setup
-  withCredentials: true,
-});
+const RESOURCE_NAME = "auth";
 
-export const loginApi = (data: { email: string; password: string }) =>
-  API.post("/auth/login", data);
+export async function signInUser(data: SignInRequest): Promise<SignInResponse> {
+  return (await API.post<SignInResponse>(`/${RESOURCE_NAME}/login`, data)).data;
+}
 
-export const signupApi = (data: {
-  name: string;
-  email: string;
-  password: string;
-}) => API.post("/auth/signup", data);
+export async function signUpUser(data: SignUpRequest): Promise<Partial<User>> {
+  return (await API.post<Partial<User>>(`/${RESOURCE_NAME}/signup`, data)).data;
+}

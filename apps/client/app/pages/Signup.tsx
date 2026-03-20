@@ -1,45 +1,53 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../store/index";
-import { signup } from "../features/Auth/authSlice";
-import AuthImage from '../images/auth-image.jpg';
-import AuthDecoration from '../images/auth-decoration.png';
+import { signUp } from "../features/auth/authSlice";
+import HouseOfGodImage from "../assets/house-of-god-2k.webp";
+import type { SignUpRequest } from "~/interfaces/auth.interface";
+import logo from "../assets/csi-sirumugai-logo.png";
+// import AuthDecoration from "../images/auth-decoration.png";
 
 function Signup() {
-
   const dispatch = useDispatch<AppDispatch>();
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const {user, loading, error} = useSelector((state : RootState) => state.auth);
-  const [formData, setFormData] = useState({
-    email: "",
+  const { user, loading, error } = useSelector(
+    (state: RootState) => state.auth,
+  );
+
+  const [formData, setFormData] = useState<SignUpRequest>({
     name: "",
-    role: "",
-    password:""
-  })
+    email: "",
+    role: "user",
+    password: "",
+  });
 
-  useEffect(()=>{
-    if(user) Navigate("/");
-  },[])
+  useEffect(() => {
+    if (user) navigate("/");
+  }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>{
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
-    console.log(e.target.value)
   };
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    console.log(formData);
-    dispatch(signup(formData))
-  }
+    try {
+      await dispatch(signUp(formData)).unwrap();
+      // TODO: Pop a toast and redirect
+    } catch (error) {
+      // TODO: Pop a relevant toast for error
+    }
+  };
 
   return (
     <main className="bg-white">
-
       <div className="relative md:flex">
         {/* Content */}
         <div className="md:w-1/2">
@@ -49,87 +57,163 @@ function Signup() {
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <Link className="block" to="/">
-                  <svg width="32" height="32" viewBox="0 0 32 32">
-                    <defs>
-                      <linearGradient x1="28.538%" y1="20.229%" x2="100%" y2="108.156%" id="logo-a">
-                        <stop stopColor="#A5B4FC" stopOpacity="0" offset="0%" />
-                        <stop stopColor="#A5B4FC" offset="100%" />
-                      </linearGradient>
-                      <linearGradient x1="88.638%" y1="29.267%" x2="22.42%" y2="100%" id="logo-b">
-                        <stop stopColor="#38BDF8" stopOpacity="0" offset="0%" />
-                        <stop stopColor="#38BDF8" offset="100%" />
-                      </linearGradient>
-                    </defs>
-                    <rect fill="#6366F1" width="32" height="32" rx="16" />
-                    <path d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z" fill="#4F46E5" />
-                    <path d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z" fill="url(#logo-a)" />
-                    <path d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z" fill="url(#logo-b)" />
-                  </svg>
+                  <img
+                    width="50"
+                    height="50"
+                    src={logo}
+                    alt="CSI-Immanuel-Church-Sirumugai-Logo"
+                  ></img>
                 </Link>
               </div>
             </div>
 
-            <div className="max-w-sm mx-auto px-4 py-8">
-              <h1 className="text-3xl text-gray-800 font-bold mb-6">Create your Account</h1>
+            <div className="w-96 max-w-sm mx-auto px-4 py-8">
+              <h1 className="text-3xl text-gray-800 font-bold mb-6">
+                Create your family account
+              </h1>
               {/* Form */}
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address <span className="text-red-500">*</span></label>
-                    <input id="email" className="form-input w-full" type="email" value={formData.email} onChange={handleInputChange} />
+                    <label
+                      className="block text-sm font-medium mb-1"
+                      htmlFor="email"
+                    >
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="email"
+                      className="form-input w-full"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="name">Full Name <span className="text-red-500">*</span></label>
-                    <input id="name" className="form-input w-full" type="text" value={formData.name} onChange={handleInputChange}/>
+                    <label
+                      className="block text-sm font-medium mb-1"
+                      htmlFor="name"
+                    >
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="name"
+                      className="form-input w-full"
+                      type="text"
+                      value={formData.name}
+                      required
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="role">Your Role <span className="text-red-500">*</span></label>
-                    <select id="role" className="form-select w-full" value={formData.role} onChange={handleInputChange}>
-                      <option>Designer</option>
-                      <option>Developer</option>
-                      <option>Accountant</option>
+                    <label
+                      className="block text-sm font-medium mb-1"
+                      htmlFor="role"
+                    >
+                      Your Role <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="role"
+                      className="form-select w-full"
+                      value={formData.role}
+                      required
+                      onChange={handleInputChange}
+                    >
+                      <option value={"user"}>Member</option>
+                      <option value={"admin"}>Management</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="password">Password</label>
-                    <input id="password" className="form-input w-full" type="password" autoComplete="on" value={formData.password} onChange={handleInputChange}/>
+                    <label
+                      className="block text-sm font-medium mb-1"
+                      htmlFor="password"
+                    >
+                      Password
+                    </label>
+                    <input
+                      id="password"
+                      className="form-input w-full"
+                      type="password"
+                      autoComplete="on"
+                      required
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-6">
-                  <div className="mr-1">
+                  {/* <div className="mr-1">
                     <label className="flex items-center">
                       <input type="checkbox" className="form-checkbox" />
-                      <span className="text-sm ml-2">Email me about product news.</span>
+                      <span className="text-sm ml-2">
+                        Email me about product news.
+                      </span>
                     </label>
+                  </div> */}
+                  <div>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap"
+                    >
+                      {loading ? "Signing Up..." : "Sign Up"}
+                    </button>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-out ${
+                        formData.role === "admin"
+                          ? "opacity-100 translate-y-0 max-h-32 mt-5"
+                          : "opacity-0 -translate-y-2 max-h-0"
+                      }`}
+                    >
+                      <div className="bg-yellow-100 text-yellow-600 px-3 py-2 rounded">
+                        <span className="text-sm">
+                          Management accounts will be submitted for review and
+                          will be activated after approval.
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
-                  >
-                    {loading ? "Creating..." : "Sign Up"}
-                  </button>
                 </div>
               </form>
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-gray-200">
                 <div className="text-sm">
-                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">Sign In</Link>
+                  Have an account?{" "}
+                  <Link
+                    className="font-medium text-indigo-500 hover:text-indigo-600"
+                    to="/signin"
+                  >
+                    Sign In
+                  </Link>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
         {/* Image */}
-        <div className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
-          <img className="object-cover object-center w-full h-full" src={AuthImage} width="760" height="1024" alt="Authentication" />
-          <img className="absolute top-1/4 left-0 transform -translate-x-1/2 ml-8 hidden lg:block" src={AuthDecoration} width="218" height="224" alt="Authentication decoration" />
+        <div
+          className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2"
+          aria-hidden="true"
+        >
+          <img
+            className="object-cover object-center w-full h-full"
+            src={HouseOfGodImage}
+            width="760"
+            height="1024"
+            alt="CSI-Immanuel-Church-Sirumugai"
+          />
+          {/* <img
+            className="absolute top-1/4 left-0 transform -translate-x-1/2 ml-8 hidden lg:block"
+            src={}
+            width="218"
+            height="224"
+            alt="Authentication decoration"
+          /> */}
         </div>
-
       </div>
-
     </main>
   );
 }

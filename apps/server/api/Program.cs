@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 /*
- * This is the standard, recommended approach for adding controller modules in modular monoliths
+ * This is the standard, recommended approach for adding module controllers in modular monoliths
  
  * AuthModule is a class inside the Auth module (AuthModule.cs)
  * typeof(AuthModule) gets the System.Type object representing that class
