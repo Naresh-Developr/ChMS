@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi, signupApi } from "../../api/auth.api";
-import type { AuthState } from "../../interfaces/auth.interface";
+import { signInUser, signUpUser } from "../../api/auth.api";
+import type {
+  AuthState,
+  SignInRequest,
+  SignUpRequest,
+} from "../../interfaces/auth.interface";
+import { setAuthAccessToken } from "~/utils/services/tokenServices";
 
 const initialState: AuthState = {
   user: null,
@@ -8,35 +13,32 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async (data: { email: string; password: string }, thunkAPI) => {
+export const signIn = createAsyncThunk(
+  "auth/signin",
+  async (data: SignInRequest, thunkAPI) => {
     try {
-      const response = await loginApi(data);
-      return response.data;
+      const response = await signInUser(data);
+      setAuthAccessToken(response.accessToken);
+      return response;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Login failed"
+        error.response?.data?.message || "Login failed",
       );
     }
-  }
+  },
 );
 
-export const signup = createAsyncThunk(
+export const signUp = createAsyncThunk(
   "auth/signup",
-  async (
-    data: { name: string; email: string; password: string },
-    thunkAPI
-  ) => {
+  async (data: SignUpRequest, thunkAPI) => {
     try {
-      const response = await signupApi(data);
-      return response.data;
+      return await signUpUser(data);
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Signup failed"
+        error.response?.data?.message || "Signup failed",
       );
     }
-  }
+  },
 );
 
 const authSlice = createSlice({
@@ -49,31 +51,29 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
-      // LOGIN
-      .addCase(login.pending, (state) => {
+      // SignIn Reducers
+      .addCase(signIn.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
 
-      // SIGNUP
-      .addCase(signup.pending, (state) => {
+      // SignUp Reducers
+      .addCase(signUp.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(signup.fulfilled, (state, action) => {
+      .addCase(signUp.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload;
       })
-      .addCase(signup.rejected, (state, action) => {
+      .addCase(signUp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
