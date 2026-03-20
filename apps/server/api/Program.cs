@@ -1,8 +1,12 @@
 using System.Reflection;
 using api.Extensions;
 using ChMS.Modules.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,19 +21,50 @@ var builder = WebApplication.CreateBuilder(args);
  * To put it plainly, .AddControllers() alone finds controllers in the main assembly
  * .AddApplicationPart(typeof(AuthModule).Assembly) tells it to also search in Evently.Modules.Auth.dll
  */
-builder.Services.AddControllers().AddApplicationPart(typeof(AuthModule).Assembly);
+builder.Services.AddControllers()
+    .ConfigureApplicationPartManager(manager =>
+    {
+        manager.ApplicationParts.Add(
+            new AssemblyPart(typeof(AuthModule).Assembly)
+        );
+    });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthModule(builder.Configuration);
 
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var config = builder.Configuration;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = config["Jwt:Issuer"],
+            ValidAudience = config["Jwt:Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)
+            )
+        };
+    });
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseAuthentication();
+app.UseAuthorization();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
     app.MapScalarApiReference(options =>
     {
         options
@@ -37,14 +72,13 @@ if (app.Environment.IsDevelopment())
             .WithTheme(ScalarTheme.Moon)
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
+
     app.RunMigrations();
 }
 else
 {
     app.UseHttpsRedirection();
 }
-
-app.UseAuthorization();
 
 app.MapControllers();
 

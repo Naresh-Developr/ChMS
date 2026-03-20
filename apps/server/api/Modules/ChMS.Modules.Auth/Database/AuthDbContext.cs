@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChMS.Modules.Auth.Database
 {
-    internal sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
+    public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
     {
         internal DbSet<User> Users { get; set; }
 

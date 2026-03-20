@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ChMS.Modules.Auth.Core.Enums
 {
-    internal enum UserRole
+    public enum UserRole
     {
         SuperAdmin = 1,
         Admin = 2,
