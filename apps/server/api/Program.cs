@@ -1,11 +1,9 @@
-using System.Reflection;
 using System.Text;
 using api.Extensions;
 using ChMS.Modules.Auth;
 using ChMS.Modules.Auth.Application.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
@@ -30,7 +28,13 @@ builder
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(
+    "v1",
+    options =>
+    {
+        options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    }
+);
 
 builder.Services.AddAuthModule(builder.Configuration);
 
@@ -60,6 +64,7 @@ builder
             // JWT by default adds 5 more mins on top of given expiration
             // This line prevents that from happening
             ClockSkew = TimeSpan.Zero,
+            RoleClaimType = "Role",
         };
     });
 
@@ -78,6 +83,17 @@ if (app.Environment.IsDevelopment())
             .WithTitle("ChMS Server")
             .WithTheme(ScalarTheme.Moon)
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        options
+            .AddPreferredSecuritySchemes("Bearer")
+            .AddHttpAuthentication(
+                "Bearer",
+                auth =>
+                {
+                    auth.Token = "";
+                }
+            )
+            .EnablePersistentAuthentication();
     });
 
     app.RunMigrations();
