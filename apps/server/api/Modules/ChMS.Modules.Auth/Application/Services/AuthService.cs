@@ -1,50 +1,61 @@
+using ChMS.Modules.Auth.Controllers;
+using ChMS.Modules.Auth.Core.DTOs;
 using ChMS.Modules.Auth.Core.Entities;
 using ChMS.Modules.Auth.Core.Enums;
 using ChMS.Modules.Auth.Database;
-using ChMS.Modules.Auth.Infrastructure.Security;
+using ChMS.Modules.Auth.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ChMS.Modules.Auth.Application.Services
 {
-    public class AuthService
+    public class AuthService(AuthDbContext authDbContext, JwtService jwtService, ILogger<AuthService> logger)
     {
-        private readonly AuthDbContext _db;
-        private readonly JwtService _jwt;
+        private readonly AuthDbContext _db = authDbContext;
+        private readonly JwtService _jwt = jwtService;
+        private readonly ILogger<AuthService> _logger = logger;
 
-        public AuthService(AuthDbContext db, JwtService jwt)
+        public async Task<Guid> Signup(SignUpRequest signUpRequest)
         {
-            _db = db;
-            _jwt = jwt;
-        }
+            bool duplicateEmail = await _db.Users.AnyAsync(u => u.Email == signUpRequest.Email);
 
-        public async Task<string> Register(string username, string email, string password)
-        {
-            var user = new User
+            if (duplicateEmail)
+                throw new InvalidDataException("Given email already exists!");
+
+            try
             {
-                Id = Guid.NewGuid(),
-                Username = username,
-                Email = email,
-                PasswordHash = PasswordHasher.Hash(password),
-                Role = UserRole.Admin,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = signUpRequest.Name,
+                    Email = signUpRequest.Email,
+                    PasswordHash = PasswordHasher.HashPassword(signUpRequest.Password),
+                    Role = signUpRequest.Role,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                };
 
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
+                _db.Users.Add(user);
+                await _db.SaveChangesAsync();
 
-            return _jwt.GenerateToken(user);
+                return user.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occured: {ex.Message}", ex.Message);
+                throw;
+            }
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<string> Signin(string email, string password)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             if (user == null)
                 throw new Exception("Invalid credentials");
 
-            if (!PasswordHasher.Verify(password, user.PasswordHash))
+            if (!PasswordHasher.ValidatePassword(password, user.PasswordHash))
                 throw new Exception("Invalid credentials");
 
             return _jwt.GenerateToken(user);
