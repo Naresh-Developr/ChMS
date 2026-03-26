@@ -23,30 +23,22 @@ namespace ChMS.Modules.Auth.Application.Services
             if (duplicateEmail)
                 throw new DuplicateEntityException("Email", signUpRequest.Email);
 
-            try
+            var user = new User
             {
-                var user = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Username = signUpRequest.Name,
-                    Email = signUpRequest.Email,
-                    PasswordHash = PasswordHasher.HashPassword(signUpRequest.Password),
-                    Role = signUpRequest.Role,
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                };
+                Id = Guid.NewGuid(),
+                Username = signUpRequest.Name,
+                Email = signUpRequest.Email,
+                PasswordHash = PasswordHasher.HashPassword(signUpRequest.Password),
+                Role = signUpRequest.Role,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
 
-                _db.Users.Add(user);
-                await _db.SaveChangesAsync();
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
 
-                return user.Id;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occured: {Message}", ex.Message);
-                throw;
-            }
+            return user.Id;
         }
 
         public async Task<string> Signin(string email, string password)
