@@ -4,6 +4,7 @@ using ChMS.Modules.Auth.Core.Entities;
 using ChMS.Modules.Auth.Core.Enums;
 using ChMS.Modules.Auth.Database;
 using ChMS.Modules.Auth.Infrastructure;
+using EZXception.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +21,7 @@ namespace ChMS.Modules.Auth.Application.Services
             bool duplicateEmail = await _db.Users.AnyAsync(u => u.Email == signUpRequest.Email);
 
             if (duplicateEmail)
-                throw new InvalidDataException("Given email already exists!");
+                throw new DuplicateEntityException("Email", signUpRequest.Email);
 
             try
             {
@@ -43,7 +44,7 @@ namespace ChMS.Modules.Auth.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occured: {ex.Message}", ex.Message);
+                _logger.LogError(ex, "An unexpected error occured: {Message}", ex.Message);
                 throw;
             }
         }
