@@ -7,6 +7,8 @@ namespace api.Extensions
 {
     public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
     {
+        private readonly ILogger _logger = logger;
+
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
             Exception exception,
@@ -19,14 +21,20 @@ namespace api.Extensions
 
             switch (exception)
             {
-                case DuplicateEntityException dee:
+                case DuplicateEntityException duplicateEntityException:
                     statusCode = HttpStatusCode.Conflict;
-                    message = dee.Message;
+                    message = duplicateEntityException.Message;
+                    logLevel = LogLevel.Warning;
+                    break;
+
+                case EntityNotFoundException entityNotFound:
+                    statusCode = HttpStatusCode.NotFound;
+                    message = entityNotFound.Message;
                     logLevel = LogLevel.Warning;
                     break;
 
                 default:
-                    message = $"Unhandled exception occured!";
+                    message = $"Unhandled exception occurred!";
                     break;
             }
 
@@ -43,7 +51,7 @@ namespace api.Extensions
                 cancellationToken: cancellationToken
             );
 
-            logger.Log(
+            _logger.Log(
                 logLevel,
                 exception,
                 "Method: {Method}, Path: {Path}, TraceId: {TraceId}, Error: {ErrorMessage}",
