@@ -26,6 +26,7 @@ namespace ChMS.Modules.Auth
             services.AddOptions<JwtSettings>().BindConfiguration("Jwt").ValidateDataAnnotations().ValidateOnStart();
 
             services.AddScoped<AuthService>();
+            services.AddScoped<UserService>();
             services.AddSingleton<JwtService>();
 
             return services;

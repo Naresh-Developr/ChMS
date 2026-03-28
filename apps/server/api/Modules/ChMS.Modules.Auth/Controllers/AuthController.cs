@@ -17,7 +17,12 @@ namespace ChMS.Modules.Auth.Controllers
         public async Task<IActionResult> Signup(SignUpRequest signUpRequest)
         {
             var userId = await _auth.Signup(signUpRequest);
-            return Ok(new { id = userId.ToString() });
+            return CreatedAtAction(
+                actionName: "GetUserById",
+                controllerName: "User",
+                routeValues: new { id = userId },
+                value: new { id = userId }
+            );
         }
 
         [HttpPost("signin")]
