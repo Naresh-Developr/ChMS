@@ -10,11 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace ChMS.Modules.Auth.Application.Services
 {
-    public class AuthService(AuthDbContext authDbContext, JwtService jwtService, ILogger<AuthService> logger)
+    public class AuthService(AuthDbContext authDbContext, JwtService jwtService)
     {
         private readonly AuthDbContext _db = authDbContext;
         private readonly JwtService _jwt = jwtService;
-        private readonly ILogger<AuthService> _logger = logger;
 
         public async Task<Guid> Signup(SignUpRequest signUpRequest)
         {
