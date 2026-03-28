@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using EZXception.Data;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,12 @@ namespace api.Extensions
                     message = ex.Message;
                     break;
 
+                case ValidationException ex:
+                    statusCode = HttpStatusCode.BadRequest;
+                    logLevel = LogLevel.Warning;
+                    message = ex.Message;
+                    break;
+
                 default:
                     message = env.IsDevelopment() ? exception.Message : "An unexpected error occurred.";
                     break;
@@ -52,26 +59,28 @@ namespace api.Extensions
             logger.Log(
                 logLevel,
                 exception,
-                "Method: {Method}, Path: {Path}, TraceId: {TraceId}, Error: {ErrorMessage}",
+                "Method: {Method}, Path: {Path}, ExceptionMessage: {Message}, TraceId: {TraceId}",
                 httpContext.Request.Method,
                 httpContext.Request.Path,
-                httpContext.TraceIdentifier,
-                message
+                message,
+                httpContext.TraceIdentifier
             );
 
             httpContext.Response.StatusCode = (int)statusCode;
 
-            await problemDetailsService.WriteAsync(new ProblemDetailsContext
-            {
-                HttpContext = httpContext,
-                Exception = exception,
-                ProblemDetails = new ProblemDetails
+            await problemDetailsService.WriteAsync(
+                new ProblemDetailsContext
                 {
-                    Status = (int)statusCode,
-                    Title = message,
-                    Extensions = { ["traceId"] = httpContext.TraceIdentifier },
-                },
-            });
+                    HttpContext = httpContext,
+                    Exception = exception,
+                    ProblemDetails = new ProblemDetails
+                    {
+                        Status = (int)statusCode,
+                        Title = message,
+                        Extensions = { ["traceId"] = httpContext.TraceIdentifier },
+                    },
+                }
+            );
 
             return true;
         }

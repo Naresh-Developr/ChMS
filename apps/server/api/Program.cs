@@ -36,6 +36,9 @@ builder.Services.AddOpenApi(
     }
 );
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddAuthModule(builder.Configuration);
 
 var jwtSettings =
@@ -70,6 +73,7 @@ builder
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
