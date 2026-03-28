@@ -4,6 +4,7 @@ using ChMS.Modules.Auth.Core.Entities;
 using ChMS.Modules.Auth.Core.Enums;
 using ChMS.Modules.Auth.Database;
 using ChMS.Modules.Auth.Infrastructure;
+using EZXception.Authorization;
 using EZXception.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -42,13 +43,11 @@ namespace ChMS.Modules.Auth.Application.Services
 
         public async Task<string> Signin(string email, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
-
-            if (user == null)
-                throw new Exception("Invalid credentials");
+            var user =
+                await _db.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw new InvalidCredentialsException();
 
             if (!PasswordHasher.ValidatePassword(password, user.PasswordHash))
-                throw new Exception("Invalid credentials");
+                throw new InvalidCredentialsException();
 
             return _jwt.GenerateToken(user);
         }
