@@ -25,6 +25,8 @@ export interface User {
   role: UserRole;
 }
 
-export interface SignInResponse extends User {
+export interface SignInResponse {
   accessToken: string;
+  expiresOn: number;
+  user: User;
 }
