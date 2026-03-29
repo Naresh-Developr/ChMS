@@ -27,6 +27,6 @@ export interface User {
 
 export interface SignInResponse {
   accessToken: string;
-  expiresOn: number;
+  expiresOn: string;
   user: User;
 }
