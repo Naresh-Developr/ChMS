@@ -39,14 +39,14 @@ namespace api.Extensions
                     message = ex.Message;
                     break;
 
-                case UnauthorizedAccessException ex:
-                    statusCode = HttpStatusCode.Unauthorized;
+                case ValidationException ex:
+                    statusCode = HttpStatusCode.BadRequest;
                     logLevel = LogLevel.Warning;
                     message = ex.Message;
                     break;
 
-                case ValidationException ex:
-                    statusCode = HttpStatusCode.BadRequest;
+                case InvalidCastException ex:
+                    statusCode = HttpStatusCode.Unauthorized;
                     logLevel = LogLevel.Warning;
                     message = ex.Message;
                     break;

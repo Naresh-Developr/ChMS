@@ -10,7 +10,7 @@ namespace ChMS.Modules.Auth.Core.Entities
         public Guid Id { get; set; }
 
         [MaxLength(100)]
-        public required string Username { get; set; }
+        public required string Name { get; set; }
 
         [MaxLength(150)]
         [EmailAddress]

@@ -28,8 +28,8 @@ namespace ChMS.Modules.Auth.Controllers
         [HttpPost("signin")]
         public async Task<IActionResult> Signin(LoginRequest req)
         {
-            var token = await _auth.Signin(req.Email, req.Password);
-            return Ok(new { token });
+            SignInResponse res = await _auth.Signin(req.Email, req.Password);
+            return Ok(res);
         }
 
         [HttpGet("test")]

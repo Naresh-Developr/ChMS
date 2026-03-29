@@ -1,13 +1,10 @@
-using ChMS.Modules.Auth.Controllers;
 using ChMS.Modules.Auth.Core.DTOs;
 using ChMS.Modules.Auth.Core.Entities;
-using ChMS.Modules.Auth.Core.Enums;
 using ChMS.Modules.Auth.Database;
 using ChMS.Modules.Auth.Infrastructure;
 using EZXception.Authorization;
 using EZXception.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ChMS.Modules.Auth.Application.Services
 {
@@ -26,7 +23,7 @@ namespace ChMS.Modules.Auth.Application.Services
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = signUpRequest.Name,
+                Name = signUpRequest.Name,
                 Email = signUpRequest.Email,
                 PasswordHash = PasswordHasher.HashPassword(signUpRequest.Password),
                 Role = signUpRequest.Role,
@@ -41,7 +38,7 @@ namespace ChMS.Modules.Auth.Application.Services
             return user.Id;
         }
 
-        public async Task<string> Signin(string email, string password)
+        public async Task<SignInResponse> Signin(string email, string password)
         {
             var user =
                 await _db.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw new InvalidCredentialsException();
@@ -49,7 +46,20 @@ namespace ChMS.Modules.Auth.Application.Services
             if (!PasswordHasher.ValidatePassword(password, user.PasswordHash))
                 throw new InvalidCredentialsException();
 
-            return _jwt.GenerateToken(user);
+            var (token, expiresOn) = _jwt.GenerateToken(user);
+
+            return new SignInResponse
+            {
+                AccessToken = token,
+                ExpiresOn = expiresOn,
+                User = new SignInResponse.UserInfo
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role,
+                },
+            };
         }
     }
 }
