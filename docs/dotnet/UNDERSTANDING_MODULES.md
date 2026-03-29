@@ -814,13 +814,18 @@ internal static void RunMigrations(this IApplicationBuilder app)
 <ProjectReference Include="Modules\ChMS.Modules.Groups\ChMS.Modules.Groups.csproj" />
 ```
 
-### Step 9: Generate the first migration
+### Step 9: Generate migrations
 
 ```bash
-dotnet ef migrations add InitialCreate \
-    --project Modules/ChMS.Modules.Groups/ChMS.Modules.Groups.csproj \
+dotnet ef migrations add <MigrationName> \
+    --project Modules/ChMS.Modules.<ModuleName>/ChMS.Modules.<ModuleName>.csproj \
     --startup-project . \
-    --context GroupsDbContext
+    --context <ModuleDbContext>
+    --output-dir Database/Migrations
+```
+
+```bash
+dotnet ef migrations add <MigrationName> --project Modules/ChMS.Modules.<ModuleName>/ChMS.Modules.<ModuleName>.csproj --startup-project . --context <ModuleDbContext> --output-dir Database/Migrations
 ```
 
 ### Step 10: Run the app
