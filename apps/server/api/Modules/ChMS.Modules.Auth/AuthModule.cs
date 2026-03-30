@@ -1,4 +1,5 @@
 using ChMS.Modules.Auth.Application.Services;
+using ChMS.Modules.Auth.Application.Settings;
 using ChMS.Modules.Auth.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -21,9 +22,11 @@ namespace ChMS.Modules.Auth
                         npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schema.Name)
                 );
             });
-            
+
+            services.AddOptions<JwtSettings>().BindConfiguration("Jwt").ValidateDataAnnotations().ValidateOnStart();
+
             services.AddScoped<AuthService>();
-            services.AddScoped<JwtService>();
+            services.AddSingleton<JwtService>();
 
             return services;
         }
