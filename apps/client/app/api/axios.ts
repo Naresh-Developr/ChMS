@@ -9,7 +9,16 @@ const API = axios.create({
 API.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const url = error.config?.url;
+
+    const exclude401Endpoints = ["/signin", "/signup"];
+
+    const contains401ExcludedEndpoints = exclude401Endpoints.some((endpoint) =>
+      url?.includes(endpoint),
+    );
+
+    if (status === 401 && !contains401ExcludedEndpoints) {
       alert("Session expired!, please login again.");
       window.location.href = "./signin";
       return Promise.reject(error);
