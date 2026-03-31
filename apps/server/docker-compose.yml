@@ -25,8 +25,8 @@ services:
       - POSTGRES_PASSWORD=letmein
     # This is causing an issue, so I've commented it out for now
     # Volumes help us persist data in table even when conatiners are deleted
-    # volumes:
-    #   - chms_db_data:/var/lib/postgresql/data
+    volumes:
+      - chms_db_data:/var/lib/postgresql
     # healthcheck:
     #   test: [ "CMD-SHELL", "pg_isready -U postgres" ]
     #   interval: 5s
@@ -36,5 +36,5 @@ services:
       - 5432:5432
 
 volumes:
-  postgres_data:
-    name: chms_db_data
+  chms_db_data:
+    
