@@ -31,13 +31,5 @@ namespace ChMS.Modules.Auth.Controllers
             SignInResponse res = await _auth.Signin(req.Email, req.Password);
             return Ok(res);
         }
-
-        [HttpGet("test")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> testApi()
-        {
-            var message = "got it";
-            return Ok(new { message });
-        }
     }
 }
