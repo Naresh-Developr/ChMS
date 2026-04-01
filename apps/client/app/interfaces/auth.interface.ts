@@ -3,7 +3,10 @@ export type UserRole = "user" | "admin" | "superAdmin";
 export interface AuthState {
   user: User | null;
   loading: boolean;
-  error: string | null;
+  error: {
+    message: string;
+    status: string;
+  } | null;
 }
 
 export interface SignUpRequest {
