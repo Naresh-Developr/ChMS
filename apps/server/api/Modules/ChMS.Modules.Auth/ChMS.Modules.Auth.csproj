@@ -9,6 +9,7 @@
   <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+	<PackageReference Include="EZXception" Version="1.0.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -28,9 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Core\DTOs\" />
-    <Folder Include="Core\Services\" />
+    <Folder Include="Database\Migrations\" />
   </ItemGroup>
 
 </Project>

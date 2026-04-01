@@ -5,7 +5,7 @@ import type {
   SignInRequest,
   SignUpRequest,
 } from "../../interfaces/auth.interface";
-import { setAuthAccessToken } from "~/utils/services/tokenServices";
+import { setAccessToken } from "~/utils/services/tokenServices";
 
 const initialState: AuthState = {
   user: null,
@@ -18,7 +18,7 @@ export const signIn = createAsyncThunk(
   async (data: SignInRequest, thunkAPI) => {
     try {
       const response = await signInUser(data);
-      setAuthAccessToken(response.accessToken);
+      setAccessToken(response.accessToken, response.expiresOn);
       return response;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -58,7 +58,7 @@ const authSlice = createSlice({
       })
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;

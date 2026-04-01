@@ -1,41 +1,35 @@
 using ChMS.Modules.Auth.Application.Services;
+using ChMS.Modules.Auth.Core.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ChMS.Modules.Auth.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : ControllerBase
+    public class AuthController(AuthService authService) : ControllerBase
     {
-        private readonly AuthService _auth;
+        private readonly AuthService _auth = authService;
 
-        public AuthController(AuthService auth)
+        [HttpPost("signup")]
+        public async Task<IActionResult> Signup(SignUpRequest signUpRequest)
         {
-            _auth = auth;
+            var userId = await _auth.Signup(signUpRequest);
+            return CreatedAtAction(
+                actionName: "GetUserById",
+                controllerName: "User",
+                routeValues: new { id = userId },
+                value: new { id = userId }
+            );
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequest req)
+        [HttpPost("signin")]
+        public async Task<IActionResult> Signin(LoginRequest req)
         {
-            var token = await _auth.Register("temp", req.Email, req.Password);
-            return Ok(new { token });
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest req)
-        {
-            var token = await _auth.Login(req.Email, req.Password);
-            return Ok(new { token });
-        }
-
-        [HttpGet("test")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> testApi()
-        {
-            var message = "got it";
-            return Ok(new { message });
+            SignInResponse res = await _auth.Signin(req.Email, req.Password);
+            return Ok(res);
         }
     }
 }

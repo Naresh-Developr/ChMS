@@ -36,6 +36,9 @@ builder.Services.AddOpenApi(
     }
 );
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddAuthModule(builder.Configuration);
 
 var jwtSettings =
@@ -68,7 +71,22 @@ builder
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "Dev",
+        policy =>
+        {
+            policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
+        }
+    );
+});
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+
+app.UseCors("Dev");
 
 app.UseAuthentication();
 app.UseAuthorization();
