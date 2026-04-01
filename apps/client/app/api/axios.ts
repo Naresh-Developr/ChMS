@@ -38,8 +38,9 @@ API.interceptors.response.use(
     if (status === 401 && !containsExcludedEndpoints) {
       alert("Session expired!, please login again.");
       window.location.href = "./signin";
-      return Promise.reject(error);
     }
+
+    return Promise.reject(error);
   },
 );
 
