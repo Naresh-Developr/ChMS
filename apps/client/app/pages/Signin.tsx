@@ -47,6 +47,10 @@ function Signin() {
         type: "success",
         message: "Signed in successfully!",
       });
+      setTimeout(() => {
+        navigate("/");
+        setFormData({ email: "", password: "" });
+      }, 3000);
     } catch (error: any) {
       if (error.status == 401) {
         setToast({
