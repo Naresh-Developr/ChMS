@@ -48,7 +48,19 @@ function Signin() {
         message: "Signed in successfully!",
       });
     } catch (error: any) {
-      console.log(error);
+      if (error.status == 401) {
+        setToast({
+          open: true,
+          type: "error",
+          message: "Invalid credentials!",
+        });
+      } else {
+        setToast({
+          open: true,
+          type: "error",
+          message: "Server down!",
+        });
+      }
     }
   };
 
@@ -66,6 +78,13 @@ function Signin() {
                   <img width="50" height="50" src={logo} alt="CSI-Immanuel-Church-Sirumugai-Logo"></img>
                 </Link>
               </div>
+              <Toast2
+                open={toast.open}
+                type={toast.type}
+                children={toast.message}
+                setOpen={(val) => setToast((prev) => ({ ...prev, open: val }))}
+                className={"w-96 max-w-sm mx-auto px-8 py-8"}
+              ></Toast2>
             </div>
 
             <div className="w-96 max-w-sm mx-auto px-4 py-8">
@@ -106,7 +125,7 @@ function Signin() {
                     </Link>
                   </div>
                   <button
-                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3"
+                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 disabled"
                     disabled={loading}
                     type="submit"
                   >
@@ -114,13 +133,6 @@ function Signin() {
                   </button>
                 </div>
               </form>
-              <Toast2
-                open={toast.open}
-                type={toast.type}
-                children={toast.message}
-                setOpen={(val) => setToast((prev) => ({ ...prev, open: val }))}
-                className={""}
-              ></Toast2>
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-gray-200">
                 <div className="text-sm">
