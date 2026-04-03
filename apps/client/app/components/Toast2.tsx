@@ -57,10 +57,10 @@ function Toast2({
     }
   };
 
-  const [fading, setFading] = useState<boolean>(true);
+  const [fading, setFading] = useState<boolean>(false);
 
   const handleClose = () => {
-    setFading(true);
+    setFading(false);
     setTimeout(() => {
       setOpen(false);
     }, 320);
@@ -68,7 +68,7 @@ function Toast2({
 
   useEffect(() => {
     if (open && autoClose) {
-      setFading(false);
+      setFading(true);
       const autoCloseTimer = setTimeout(() => handleClose(), 3000);
       return () => clearTimeout(autoCloseTimer);
     }
@@ -79,7 +79,7 @@ function Toast2({
       {open && (
         <div className={className}>
           <div
-            className={`inline-flex min-w-80 px-4 py-2 rounded-sm text-sm border transition-all duration-300 ease-out ${fading ? "opacity-0 -translate-y-2" : "opacity-100 -translate-y-0"} ${typeColor(type)}`}
+            className={`inline-flex min-w-80 px-4 py-2 rounded-sm text-sm border transition-all duration-300 ease-out ${fading ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-2"} ${typeColor(type)}`}
           >
             <div className="flex w-full justify-between items-start">
               <div className="flex">
