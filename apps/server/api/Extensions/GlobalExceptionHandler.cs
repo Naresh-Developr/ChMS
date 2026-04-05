@@ -52,6 +52,12 @@ namespace api.Extensions
                     message = ex.Message;
                     break;
 
+                case UnauthorizedAccessException ex:
+                    statusCode = HttpStatusCode.Forbidden;
+                    logLevel = LogLevel.Warning;
+                    message = ex.Message;
+                    break;
+
                 default:
                     message = env.IsDevelopment() ? exception.Message : "An unexpected error occurred.";
                     break;
