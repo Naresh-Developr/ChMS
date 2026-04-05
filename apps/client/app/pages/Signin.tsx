@@ -58,6 +58,12 @@ function Signin() {
           type: "error",
           message: "Invalid credentials!",
         });
+      } else if (error.status == 403) {
+        setToast({
+          open: true,
+          type: "error",
+          message: "Account not activated!",
+        });
       } else {
         setToast({
           open: true,
