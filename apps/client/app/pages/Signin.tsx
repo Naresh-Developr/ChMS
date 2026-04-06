@@ -7,6 +7,7 @@ import type { SignInRequest } from "~/interfaces/auth.interface";
 import logo from "../assets/csi-sirumugai-logo.png";
 import { signIn } from "~/features/auth/authSlice";
 import Toast2 from "~/components/Toast2";
+import { useToastQueue } from "~/hooks/useToastQueue";
 // import AuthDecoration from "../images/auth-decoration.png";
 
 function Signin() {
@@ -20,14 +21,7 @@ function Signin() {
     password: "",
   });
 
-  const [toast, setToast] = useState<{
-    open: boolean;
-    type?: "error" | "success" | "warning" | undefined;
-    message: string;
-  }>({
-    open: false,
-    message: "",
-  });
+  const { toastProps, addToast } = useToastQueue();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -42,11 +36,7 @@ function Signin() {
     e.preventDefault();
     try {
       await dispatch(signIn(formData)).unwrap();
-      setToast({
-        open: true,
-        type: "success",
-        message: "Signed in successfully!",
-      });
+      addToast("success", "Signed in successfully!");
       setTimeout(() => {
         navigate("/");
         setFormData({ email: "", password: "" });
