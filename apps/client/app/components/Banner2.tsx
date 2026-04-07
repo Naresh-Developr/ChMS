@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 
+/**
+ * Banners are supposed to be made visible in the bottom of the screen
+ * Right above the footer
+ * See SignUp page for usage reference
+ */
+
 function Banner2({
   children,
   className,
   type,
   open,
   setOpen,
-  autoClose = false,
+  autoClose = true,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -81,7 +87,7 @@ function Banner2({
       {open && (
         <div className={className}>
           <div
-            className={`px-4 py-2 rounded-sm text-sm border transition-all duration-300 ease-out ${fading ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-2"} ${typeColor(type)}`}
+            className={`px-4 py-2 rounded-sm text-sm border transition-all duration-300 ease-out ${fading ? "opacity-100 -translate-y-2" : "opacity-0 -translate-y-0"} ${typeColor(type)}`}
           >
             <div className="flex w-full justify-between items-start">
               <div className="flex">
