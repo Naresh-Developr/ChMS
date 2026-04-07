@@ -8,6 +8,8 @@ import type { SignUpRequest } from "~/interfaces/auth.interface";
 import logo from "../assets/csi-sirumugai-logo.png";
 import Toast2 from "~/components/Toast2";
 import Banner2 from "~/components/Banner2";
+import { useBannerQueue } from "~/hooks/useBannerQueue";
+import { useToastQueue } from "~/hooks/useToastQueue";
 // import AuthDecoration from "../images/auth-decoration.png";
 
 function Signup() {
@@ -17,29 +19,14 @@ function Signup() {
 
   const { user, loading, error } = useSelector((state: RootState) => state.auth);
 
+  const { bannerProps, addBanner } = useBannerQueue();
+  const { toastProps, addToast } = useToastQueue();
+
   const [formData, setFormData] = useState<SignUpRequest>({
     name: "",
     email: "",
     role: "user",
     password: "",
-  });
-
-  const [toast, setToast] = useState<{
-    open: boolean;
-    type?: "error" | "success" | "warning" | undefined;
-    message: string;
-  }>({
-    open: false,
-    message: "",
-  });
-
-  const [banner, setBanner] = useState<{
-    open: boolean;
-    type?: "error" | "success" | "warning" | undefined;
-    message: string;
-  }>({
-    open: false,
-    message: "",
   });
 
   const isPasswordStrong = (password: string): boolean => {
@@ -57,20 +44,22 @@ function Signup() {
     e.preventDefault();
 
     if (!isPasswordStrong(formData.password)) {
-      setBanner({
-        open: true,
-        type: "error",
-        message:
-          "Password must be at least 8 characters and include: uppercase, lowercase, number, and special character (@$!%*?&)",
-      });
+      addBanner(
+        "error",
+        "Password must be at least 8 characters and include: uppercase, lowercase, number, and special character (@$!%*?&)",
+      );
       return;
     }
 
     try {
       await dispatch(signUp(formData)).unwrap();
-      // TODO: Pop a toast and redirect
-    } catch (error) {
-      // TODO: Pop a relevant toast for error
+      addToast("success", "Account created successfully!");
+      setTimeout(() => {
+        navigate("/signin");
+        setFormData({ name: "", email: "", role: formData.role, password: "" });
+      }, 3000);
+    } catch (error: any) {
+      addToast("error", "Server down!");
     }
   };
 
@@ -88,13 +77,14 @@ function Signup() {
                   <img width="50" height="50" src={logo} alt="CSI-Immanuel-Church-Sirumugai-Logo"></img>
                 </Link>
               </div>
-              <Banner2
-                open={banner.open}
-                type={banner.type}
-                children={banner.message}
-                setOpen={(val) => setBanner((prev) => ({ ...prev, open: val }))}
-                className="px-8 py-8"
-              ></Banner2>
+
+              <Toast2
+                open={toastProps.open}
+                type={toastProps.type}
+                children={toastProps.message}
+                setOpen={toastProps.setOpen}
+                className={"w-96 max-w-sm mx-auto px-8 py-8"}
+              ></Toast2>
             </div>
 
             <div className="w-96 max-w-sm mx-auto px-4 py-8">
@@ -152,7 +142,7 @@ function Signup() {
                       className="form-input w-full"
                       type="password"
                       autoComplete="on"
-                      minLength={8}
+                      // minLength={8}
                       required
                       value={formData.password}
                       onChange={handleInputChange}
@@ -201,6 +191,17 @@ function Signup() {
                     Sign In
                   </Link>
                 </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute top-10 left-0 w-full">
+                <Banner2
+                  open={bannerProps.open}
+                  type={bannerProps.type}
+                  children={bannerProps.message}
+                  setOpen={bannerProps.setOpen}
+                  className="px-8 py-8"
+                ></Banner2>
               </div>
             </div>
           </div>

@@ -43,23 +43,11 @@ function Signin() {
       }, 3000);
     } catch (error: any) {
       if (error.status == 401) {
-        setToast({
-          open: true,
-          type: "error",
-          message: "Invalid credentials!",
-        });
+        addToast("error", "Invalid credentials!");
       } else if (error.status == 403) {
-        setToast({
-          open: true,
-          type: "error",
-          message: "Account not activated!",
-        });
+        addToast("error", "Account not activated!");
       } else {
-        setToast({
-          open: true,
-          type: "error",
-          message: "Server down!",
-        });
+        addToast("error", "Server down!");
       }
     }
   };
@@ -79,10 +67,10 @@ function Signin() {
                 </Link>
               </div>
               <Toast2
-                open={toast.open}
-                type={toast.type}
-                children={toast.message}
-                setOpen={(val) => setToast((prev) => ({ ...prev, open: val }))}
+                open={toastProps.open}
+                type={toastProps.type}
+                children={toastProps.message}
+                setOpen={toastProps.setOpen}
                 className={"w-96 max-w-sm mx-auto px-8 py-8"}
               ></Toast2>
             </div>
