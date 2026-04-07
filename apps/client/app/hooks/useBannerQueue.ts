@@ -1,29 +1,29 @@
 import { useState, useRef, useCallback } from "react";
 
-type ToastType = "error" | "success" | "warning" | undefined;
+type BannerType = "error" | "success" | "warning" | undefined;
 
-interface ToastItem {
-  type?: ToastType;
+interface BannerItem {
+  type?: BannerType;
   message: string;
 }
 
-interface ToastProps {
+interface BannerProps {
   open: boolean;
-  type?: ToastType;
+  type?: BannerType;
   message: string;
   setOpen: (open: boolean) => void;
 }
 
-// Delay matches the Toast2 fade-out duration (320ms) plus a small buffer
+// Delay matches the Banner2 fade-out duration (320ms) plus a small buffer
 const QUEUE_DELAY_MS = 350;
 
-export function useToastQueue() {
-  const [current, setCurrent] = useState<{ open: boolean; type?: ToastType; message: string }>({
+export function useBannerQueue() {
+  const [current, setCurrent] = useState<{ open: boolean; type?: BannerType; message: string }>({
     open: false,
     message: "",
   });
 
-  const queueRef = useRef<ToastItem[]>([]);
+  const queueRef = useRef<BannerItem[]>([]);
   const isOpenRef = useRef(false);
 
   const showNext = useCallback(() => {
@@ -37,8 +37,8 @@ export function useToastQueue() {
     }
   }, []);
 
-  const addToast = useCallback(
-    (type: ToastType, message: string) => {
+  const addBanner = useCallback(
+    (type: BannerType, message: string) => {
       if (!isOpenRef.current) {
         isOpenRef.current = true;
         setCurrent({ open: true, type, message });
@@ -60,12 +60,12 @@ export function useToastQueue() {
     [showNext],
   );
 
-  const toastProps: ToastProps = {
+  const bannerProps: BannerProps = {
     open: current.open,
     type: current.type,
     message: current.message,
     setOpen,
   };
 
-  return { toastProps, addToast };
+  return { bannerProps, addBanner };
 }
