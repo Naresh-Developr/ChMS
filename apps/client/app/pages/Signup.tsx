@@ -59,7 +59,11 @@ function Signup() {
         setFormData({ name: "", email: "", role: formData.role, password: "" });
       }, 3000);
     } catch (error: any) {
-      addToast("error", "Server down!");
+      if (error.status == 409) {
+        addToast("error", "Email already in use!");
+      } else {
+        addToast("error", "Server down!");
+      }
     }
   };
 
