@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ChMS.Modules.Auth.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class UserTable : Migration
+    public partial class UserTableImprovedInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

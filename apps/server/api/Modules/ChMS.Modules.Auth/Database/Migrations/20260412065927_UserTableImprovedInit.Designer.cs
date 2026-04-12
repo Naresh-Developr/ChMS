@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChMS.Modules.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260329154341_UserTable")]
-    partial class UserTable
+    [Migration("20260412065927_UserTableImprovedInit")]
+    partial class UserTableImprovedInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
