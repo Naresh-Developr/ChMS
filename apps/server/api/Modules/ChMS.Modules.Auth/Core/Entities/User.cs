@@ -9,14 +9,12 @@ namespace ChMS.Modules.Auth.Core.Entities
     {
         public Guid Id { get; set; }
 
-        [MaxLength(100)]
         [Required]
-        [MinLength(3)]
+        [MaxLength(100)]
         public required string Name { get; set; }
 
-        [MaxLength(150)]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         [Required]
+        [MaxLength(150)]
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
 
