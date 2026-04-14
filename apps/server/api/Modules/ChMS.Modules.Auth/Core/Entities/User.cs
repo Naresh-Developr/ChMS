@@ -19,6 +19,9 @@ namespace ChMS.Modules.Auth.Core.Entities
         public required string PasswordHash { get; set; }
 
         [Required]
+        public bool HasOnboarded { get; set; }
+
+        [Required]
         public UserRole Role { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
