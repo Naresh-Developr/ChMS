@@ -17,7 +17,7 @@ function Signup() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   const { bannerProps, addBanner } = useBannerQueue();
   const { toastProps, addToast } = useToastQueue();
@@ -85,10 +85,11 @@ function Signup() {
               <Toast2
                 open={toastProps.open}
                 type={toastProps.type}
-                children={toastProps.message}
                 setOpen={toastProps.setOpen}
                 className={"w-96 max-w-sm mx-auto px-8 py-8"}
-              ></Toast2>
+              >
+                {toastProps.message}
+              </Toast2>
             </div>
 
             <div className="w-96 max-w-sm mx-auto px-4 py-8">
@@ -202,10 +203,11 @@ function Signup() {
                 <Banner2
                   open={bannerProps.open}
                   type={bannerProps.type}
-                  children={bannerProps.message}
                   setOpen={bannerProps.setOpen}
                   className="px-8 py-8"
-                ></Banner2>
+                >
+                  {bannerProps.message}
+                </Banner2>
               </div>
             </div>
           </div>

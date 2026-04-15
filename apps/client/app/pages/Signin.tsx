@@ -14,7 +14,7 @@ function Signin() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState<SignInRequest>({
     email: "",
