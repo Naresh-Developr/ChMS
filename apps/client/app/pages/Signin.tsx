@@ -113,7 +113,7 @@ function Signin() {
                     </Link>
                   </div>
                   <button
-                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 disabled"
+                    className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3"
                     disabled={loading}
                     type="submit"
                   >
