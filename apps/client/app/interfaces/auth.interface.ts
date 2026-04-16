@@ -5,7 +5,7 @@ export interface AuthState {
   loading: boolean;
   error: {
     message: string;
-    status: string;
+    status: number;
   } | null;
 }
 
