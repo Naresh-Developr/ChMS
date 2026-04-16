@@ -47,9 +47,7 @@ namespace ChMS.Modules.Auth.Application.Services
                 throw new InvalidCredentialsException();
 
             if (!user.IsActive)
-                throw new UnauthorizedAccessException(
-                    $"Access Denied: Account is not active; Id: {user.Id}, Role:{user.Role}"
-                );
+                throw new UnauthorizedAccessException($"Access Denied: Account is not active");
 
             var (token, expiresOn) = _jwt.GenerateToken(user);
 
