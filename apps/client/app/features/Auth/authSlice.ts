@@ -27,7 +27,7 @@ export const signUp = createAsyncThunk("auth/signup", async (data: SignUpRequest
     return await signUpUser(data);
   } catch (error: any) {
     return thunkAPI.rejectWithValue({
-      message: error.response?.data?.title || "Login failed",
+      message: error.response?.data?.title || "Signup failed",
       status: error.response?.status,
     });
   }
