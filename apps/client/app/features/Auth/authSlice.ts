@@ -16,7 +16,7 @@ export const signIn = createAsyncThunk("auth/signin", async (data: SignInRequest
     return response;
   } catch (error: any) {
     return thunkAPI.rejectWithValue({
-      message: error.response?.data?.title || "Login failed",
+      message: error.response?.data?.title || "SignIn failed!",
       status: error.response?.status,
     });
   }
@@ -27,7 +27,7 @@ export const signUp = createAsyncThunk("auth/signup", async (data: SignUpRequest
     return await signUpUser(data);
   } catch (error: any) {
     return thunkAPI.rejectWithValue({
-      message: error.response?.data?.title || "Login failed",
+      message: error.response?.data?.title || "SignUp failed!",
       status: error.response?.status,
     });
   }
@@ -46,6 +46,7 @@ const authSlice = createSlice({
       // SignIn reducers (handles what's returned by signIn thunk)
       .addCase(signIn.pending, (state) => {
         state.loading = true;
+        state.user = null;
         state.error = null;
       })
       .addCase(signIn.fulfilled, (state, action) => {
@@ -55,14 +56,15 @@ const authSlice = createSlice({
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as {
+          status: number;
           message: string;
-          status: string;
         };
       })
 
       // SignUp reducers (handles what's returned by signUp thunk)
       .addCase(signUp.pending, (state) => {
         state.loading = true;
+        state.user = null;
         state.error = null;
       })
       .addCase(signUp.fulfilled, (state) => {
@@ -71,8 +73,8 @@ const authSlice = createSlice({
       .addCase(signUp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as {
+          status: number;
           message: string;
-          status: string;
         };
       });
   },
