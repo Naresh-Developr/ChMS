@@ -5,6 +5,7 @@ import { setAccessToken } from "~/utils/services/tokenServices";
 
 const initialState: AuthState = {
   user: null,
+  hasOnboarded: false,
   loading: false,
   error: null,
 };
@@ -52,6 +53,7 @@ const authSlice = createSlice({
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.hasOnboarded = action.payload.hasOnboarded.valueOf();
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
