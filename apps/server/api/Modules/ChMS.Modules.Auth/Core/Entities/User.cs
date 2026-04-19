@@ -9,13 +9,16 @@ namespace ChMS.Modules.Auth.Core.Entities
     {
         public Guid Id { get; set; }
 
+        [Required]
         [MaxLength(100)]
         public required string Name { get; set; }
 
+        [Required]
         [MaxLength(150)]
-        [EmailAddress]
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
+
+        [Required]
         public UserRole Role { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }

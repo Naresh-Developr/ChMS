@@ -27,7 +27,7 @@ namespace ChMS.Modules.Auth.Application.Services
                 Email = signUpRequest.Email,
                 PasswordHash = PasswordHasher.HashPassword(signUpRequest.Password),
                 Role = signUpRequest.Role,
-                IsActive = true,
+                IsActive = signUpRequest.Role != Core.Enums.UserRole.Admin,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
@@ -45,6 +45,9 @@ namespace ChMS.Modules.Auth.Application.Services
 
             if (!PasswordHasher.ValidatePassword(password, user.PasswordHash))
                 throw new InvalidCredentialsException();
+
+            if (!user.IsActive)
+                throw new UnauthorizedAccessException($"Access Denied: Account is not active");
 
             var (token, expiresOn) = _jwt.GenerateToken(user);
 

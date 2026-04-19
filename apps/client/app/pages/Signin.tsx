@@ -6,24 +6,24 @@ import type { AppDispatch, RootState } from "../store/index";
 import type { SignInRequest } from "~/interfaces/auth.interface";
 import logo from "../assets/csi-sirumugai-logo.png";
 import { signIn } from "~/features/auth/authSlice";
+import Toast2 from "~/components/Toast2";
+import { useToastQueue } from "~/hooks/useToastQueue";
 // import AuthDecoration from "../images/auth-decoration.png";
 
 function Signin() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState<SignInRequest>({
     email: "",
     password: "",
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const { toastProps, addToast } = useToastQueue();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -36,9 +36,19 @@ function Signin() {
     e.preventDefault();
     try {
       await dispatch(signIn(formData)).unwrap();
-      // TODO: Pop a toast and redirect
-    } catch (error) {
-      // TODO: Pop a relevant toast for error
+      addToast("success", "Signed in successfully!");
+      setTimeout(() => {
+        navigate("/");
+        setFormData({ email: "", password: "" });
+      }, 3000);
+    } catch (error: any) {
+      if (error.status == 401) {
+        addToast("error", "Invalid credentials!");
+      } else if (error.status == 403) {
+        addToast("error", "Account not activated!");
+      } else {
+        addToast("error", "Server down!");
+      }
     }
   };
 
@@ -53,28 +63,25 @@ function Signin() {
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <Link className="block" to="/">
-                  <img
-                    width="50"
-                    height="50"
-                    src={logo}
-                    alt="CSI-Immanuel-Church-Sirumugai-Logo"
-                  ></img>
+                  <img width="50" height="50" src={logo} alt="CSI-Immanuel-Church-Sirumugai-Logo"></img>
                 </Link>
               </div>
+              <Toast2
+                open={toastProps.open}
+                type={toastProps.type}
+                children={toastProps.message}
+                setOpen={toastProps.setOpen}
+                className={"w-96 max-w-sm mx-auto px-8 py-8"}
+              ></Toast2>
             </div>
 
             <div className="w-96 max-w-sm mx-auto px-4 py-8">
-              <h1 className="text-3xl text-gray-800 font-bold mb-6">
-                Welcome back!
-              </h1>
+              <h1 className="text-3xl text-gray-800 font-bold mb-6">Welcome back!</h1>
               {/* Form */}
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="email"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="email">
                       Email Address
                     </label>
                     <input
@@ -86,10 +93,7 @@ function Signin() {
                     />
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="password"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="password">
                       Password
                     </label>
                     <input
@@ -104,10 +108,7 @@ function Signin() {
                 </div>
                 <div className="flex items-center justify-between mt-6">
                   <div className="mr-1">
-                    <Link
-                      className="text-sm underline hover:no-underline"
-                      to="/reset-password"
-                    >
+                    <Link className="text-sm underline hover:no-underline" to="/reset-password">
                       Forgot Password?
                     </Link>
                   </div>
@@ -124,10 +125,7 @@ function Signin() {
               <div className="pt-5 mt-6 border-t border-gray-200">
                 <div className="text-sm">
                   Don’t you have an account?{" "}
-                  <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600"
-                    to="/signup"
-                  >
+                  <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signup">
                     Sign Up
                   </Link>
                 </div>
@@ -138,10 +136,7 @@ function Signin() {
         </div>
 
         {/* Image */}
-        <div
-          className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2"
-          aria-hidden="true"
-        >
+        <div className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <img
             className="object-cover object-center w-full h-full"
             src={HouseOfGodImage}

@@ -6,15 +6,21 @@ import { signUp } from "../features/auth/authSlice";
 import HouseOfGodImage from "../assets/house-of-god-2k.webp";
 import type { SignUpRequest } from "~/interfaces/auth.interface";
 import logo from "../assets/csi-sirumugai-logo.png";
+import Toast2 from "~/components/Toast2";
+import Banner2 from "~/components/Banner2";
+import { useBannerQueue } from "~/hooks/useBannerQueue";
+import { useToastQueue } from "~/hooks/useToastQueue";
 // import AuthDecoration from "../images/auth-decoration.png";
 
 function Signup() {
+  const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { loading } = useSelector((state: RootState) => state.auth);
+
+  const { bannerProps, addBanner } = useBannerQueue();
+  const { toastProps, addToast } = useToastQueue();
 
   const [formData, setFormData] = useState<SignUpRequest>({
     name: "",
@@ -23,13 +29,11 @@ function Signup() {
     password: "",
   });
 
-  useEffect(() => {
-    if (user) navigate("/");
-  }, []);
+  const isPasswordStrong = (password: string): boolean => {
+    return PASSWORD_REGEX.test(password);
+  };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -38,11 +42,28 @@ function Signup() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+
+    if (!isPasswordStrong(formData.password)) {
+      addBanner(
+        "error",
+        "Password must be at least 8 characters and include: uppercase, lowercase, number, and special character (@$!%*?&)",
+      );
+      return;
+    }
+
     try {
       await dispatch(signUp(formData)).unwrap();
-      // TODO: Pop a toast and redirect
-    } catch (error) {
-      // TODO: Pop a relevant toast for error
+      addToast("success", "Account created successfully!");
+      setTimeout(() => {
+        navigate("/signin");
+        setFormData({ name: "", email: "", role: formData.role, password: "" });
+      }, 3000);
+    } catch (error: any) {
+      if (error.status == 409) {
+        addToast("error", "Email already in use!");
+      } else {
+        addToast("error", "Server down!");
+      }
     }
   };
 
@@ -57,28 +78,27 @@ function Signup() {
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <Link className="block" to="/">
-                  <img
-                    width="50"
-                    height="50"
-                    src={logo}
-                    alt="CSI-Immanuel-Church-Sirumugai-Logo"
-                  ></img>
+                  <img width="50" height="50" src={logo} alt="CSI-Immanuel-Church-Sirumugai-Logo"></img>
                 </Link>
               </div>
+
+              <Toast2
+                open={toastProps.open}
+                type={toastProps.type}
+                setOpen={toastProps.setOpen}
+                className={"w-96 max-w-sm mx-auto px-8 py-8"}
+              >
+                {toastProps.message}
+              </Toast2>
             </div>
 
             <div className="w-96 max-w-sm mx-auto px-4 py-8">
-              <h1 className="text-3xl text-gray-800 font-bold mb-6">
-                Create your family account
-              </h1>
+              <h1 className="text-3xl text-gray-800 font-bold mb-6">Create your family account</h1>
               {/* Form */}
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="email"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="email">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -91,10 +111,7 @@ function Signup() {
                     />
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="name"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="name">
                       Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -107,10 +124,7 @@ function Signup() {
                     />
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="role"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="role">
                       Your Role <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -125,10 +139,7 @@ function Signup() {
                     </select>
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium mb-1"
-                      htmlFor="password"
-                    >
+                    <label className="block text-sm font-medium mb-1" htmlFor="password">
                       Password
                     </label>
                     <input
@@ -136,6 +147,7 @@ function Signup() {
                       className="form-input w-full"
                       type="password"
                       autoComplete="on"
+                      // minLength={8}
                       required
                       value={formData.password}
                       onChange={handleInputChange}
@@ -169,8 +181,7 @@ function Signup() {
                     >
                       <div className="bg-yellow-100 text-yellow-600 px-3 py-2 rounded">
                         <span className="text-sm">
-                          Management accounts will be submitted for review and
-                          will be activated after approval.
+                          Management accounts will be submitted for review and will be activated after approval.
                         </span>
                       </div>
                     </div>
@@ -181,23 +192,29 @@ function Signup() {
               <div className="pt-5 mt-6 border-t border-gray-200">
                 <div className="text-sm">
                   Have an account?{" "}
-                  <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600"
-                    to="/signin"
-                  >
+                  <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">
                     Sign In
                   </Link>
                 </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute top-10 left-0 w-full">
+                <Banner2
+                  open={bannerProps.open}
+                  type={bannerProps.type}
+                  setOpen={bannerProps.setOpen}
+                  className="px-8 py-8"
+                >
+                  {bannerProps.message}
+                </Banner2>
               </div>
             </div>
           </div>
         </div>
 
         {/* Image */}
-        <div
-          className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2"
-          aria-hidden="true"
-        >
+        <div className="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <img
             className="object-cover object-center w-full h-full"
             src={HouseOfGodImage}
