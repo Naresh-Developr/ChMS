@@ -10,7 +10,6 @@ import Toast2 from "~/components/Toast2";
 import Banner2 from "~/components/Banner2";
 import { useBannerQueue } from "~/hooks/useBannerQueue";
 import { useToastQueue } from "~/hooks/useToastQueue";
-// import AuthDecoration from "../images/auth-decoration.png";
 
 function Signup() {
   const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
