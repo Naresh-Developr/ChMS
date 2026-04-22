@@ -1,10 +1,14 @@
-import { Link } from "react-router";
+import { useDispatch } from "react-redux";
+import { incrementOnboardingStepperIndex } from "~/features/onboarding/onboardingSlice";
+import type { AppDispatch } from "~/store";
 
 function Onboarding01() {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <div className="px-4 py-8">
       <div className="max-w-md mx-auto">
-        <h1 className="text-3xl text-gray-800 font-bold mb-6">Tell us what’s your situation ✨</h1>
+        <h1 className="text-3xl text-gray-800 font-bold mb-6">Tell us what’s your situation</h1>
         {/* Form */}
         <form>
           <div className="space-y-3 mb-8">
@@ -52,9 +56,14 @@ function Onboarding01() {
             </label>
           </div>
           <div className="flex items-center justify-between">
-            <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto" to="/onboarding-02">
+            <button
+              className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto"
+              onClick={() => {
+                dispatch(incrementOnboardingStepperIndex());
+              }}
+            >
               Next Step -&gt;
-            </Link>
+            </button>
           </div>
         </form>
       </div>
