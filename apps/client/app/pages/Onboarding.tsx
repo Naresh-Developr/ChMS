@@ -10,6 +10,7 @@ import Onboarding04 from "./Onboarding04";
 import {
   decrementOnboardingStepperIndex,
   incrementOnboardingStepperIndex,
+  setOnboardingStepperIndex,
 } from "~/features/onboarding/onboardingSlice";
 
 function Onboarding() {
@@ -44,36 +45,44 @@ function Onboarding() {
                     <div className="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-gray-200" aria-hidden="true"></div>
                     <ul className="relative flex justify-between w-full">
                       <li>
-                        <Link
+                        <button
                           className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 1 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          to="/onboarding-01"
+                          onClick={() => {
+                            dispatch(setOnboardingStepperIndex(1));
+                          }}
                         >
                           1
-                        </Link>
+                        </button>
                       </li>
                       <li>
-                        <Link
+                        <button
                           className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 2 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          to="/onboarding-02"
+                          onClick={() => {
+                            dispatch(setOnboardingStepperIndex(2));
+                          }}
                         >
                           2
-                        </Link>
+                        </button>
                       </li>
                       <li>
-                        <Link
+                        <button
                           className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 3 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          to="/onboarding-03"
+                          onClick={() => {
+                            dispatch(setOnboardingStepperIndex(3));
+                          }}
                         >
                           3
-                        </Link>
+                        </button>
                       </li>
                       <li>
-                        <Link
+                        <button
                           className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 4 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          to="/onboarding-04"
+                          onClick={() => {
+                            dispatch(setOnboardingStepperIndex(4));
+                          }}
                         >
                           4
-                        </Link>
+                        </button>
                       </li>
                     </ul>
                   </div>
