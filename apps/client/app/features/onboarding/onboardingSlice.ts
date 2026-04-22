@@ -10,7 +10,7 @@ const onboardingSlice = createSlice({
 
   reducers: {
     incrementOnboardingStepperIndex: (state) => {
-      return state + 1;
+      return Math.min(state + 1, MAX_ONBOARDING_INDEX);
     },
     decrementOnboardingStepperIndex: (state) => {
       return Math.max(state - 1, MIN_ONBOARDING_INDEX);
