@@ -57,6 +57,7 @@ function Onboarding01() {
           </div>
           <div className="flex items-center justify-between">
             <button
+              type="button"
               className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto"
               onClick={() => {
                 dispatch(incrementOnboardingStepperIndex());

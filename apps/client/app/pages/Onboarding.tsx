@@ -7,11 +7,7 @@ import Onboarding01 from "./Onboarding01";
 import Onboarding02 from "./Onboarding02";
 import Onboarding03 from "./Onboarding03";
 import Onboarding04 from "./Onboarding04";
-import {
-  decrementOnboardingStepperIndex,
-  incrementOnboardingStepperIndex,
-  setOnboardingStepperIndex,
-} from "~/features/onboarding/onboardingSlice";
+import { setOnboardingStepperIndex } from "~/features/onboarding/onboardingSlice";
 
 function Onboarding() {
   const onboardingStepperIndex = useSelector((state: RootState) => state.onboarding);
@@ -44,46 +40,18 @@ function Onboarding() {
                   <div className="relative">
                     <div className="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-gray-200" aria-hidden="true"></div>
                     <ul className="relative flex justify-between w-full">
-                      <li>
-                        <button
-                          className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 1 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          onClick={() => {
-                            dispatch(setOnboardingStepperIndex(1));
-                          }}
-                        >
-                          1
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 2 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          onClick={() => {
-                            dispatch(setOnboardingStepperIndex(2));
-                          }}
-                        >
-                          2
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 3 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          onClick={() => {
-                            dispatch(setOnboardingStepperIndex(3));
-                          }}
-                        >
-                          3
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === 4 ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
-                          onClick={() => {
-                            dispatch(setOnboardingStepperIndex(4));
-                          }}
-                        >
-                          4
-                        </button>
-                      </li>
+                      {[1, 2, 3, 4].map((index) => (
+                        <li key={index}>
+                          <button
+                            className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${onboardingStepperIndex === index ? "bg-indigo-500 text-white" : "bg-gray-100 text-gray-500"}`}
+                            onClick={() => {
+                              dispatch(setOnboardingStepperIndex(index));
+                            }}
+                          >
+                            {index}
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>

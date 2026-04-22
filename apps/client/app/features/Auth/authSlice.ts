@@ -53,7 +53,7 @@ const authSlice = createSlice({
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.hasOnboarded = action.payload.hasOnboarded.valueOf();
+        state.hasOnboarded = action.payload.hasOnboarded;
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
