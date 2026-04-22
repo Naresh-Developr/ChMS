@@ -62,7 +62,7 @@ function Onboarding01() {
                 dispatch(incrementOnboardingStepperIndex());
               }}
             >
-              Next Step -&gt;
+              Next Step
             </button>
           </div>
         </form>
