@@ -62,6 +62,7 @@ namespace ChMS.Modules.Auth.Application.Services
                     Email = user.Email,
                     Role = user.Role,
                 },
+                HasOnboarded = user.HasOnboarded,
             };
         }
     }

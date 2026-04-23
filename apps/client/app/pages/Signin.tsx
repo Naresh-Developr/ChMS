@@ -8,7 +8,6 @@ import logo from "../assets/csi-sirumugai-logo.png";
 import { signIn } from "~/features/auth/authSlice";
 import Toast2 from "~/components/Toast2";
 import { useToastQueue } from "~/hooks/useToastQueue";
-// import AuthDecoration from "../images/auth-decoration.png";
 
 function Signin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,10 +34,11 @@ function Signin() {
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     try {
-      await dispatch(signIn(formData)).unwrap();
+      const res = await dispatch(signIn(formData)).unwrap();
       addToast("success", "Signed in successfully!");
       setTimeout(() => {
-        navigate("/");
+        if (res.hasOnboarded) navigate("/");
+        else navigate("/onboarding");
         setFormData({ email: "", password: "" });
       }, 3000);
     } catch (error: any) {

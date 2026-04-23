@@ -2,6 +2,7 @@ export type UserRole = "user" | "admin" | "superAdmin";
 
 export interface AuthState {
   user: User | null;
+  hasOnboarded: boolean;
   loading: boolean;
   error: {
     message: string;
@@ -32,4 +33,5 @@ export interface SignInResponse {
   accessToken: string;
   expiresOn: string;
   user: User;
+  hasOnboarded: boolean;
 }
